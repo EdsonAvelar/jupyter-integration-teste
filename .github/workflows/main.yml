@@ -1,1 +1,41 @@
+name: unit_test
+
+# Controla quando o workflow é executado
+on:
+    # Ativa o workflow quando um push ou um pull_request é executado na branch main
+    push:
+        branches: [ main ]
+    pull_request:
+        branches: [ main ]
+    
+    # Permite ativar manualmente o workflow
+    workflow_dispatch:
+
+# configuração dos jobs que executará o passo a passo do workflow 
+jobs:
+    build:
+        # Escolhendo um "runner" ou uma imagem onde os steps serão executados
+        runs-on: ubuntu-latest
+
+        # Passos que serão executado um após o outros.
+        steps:
+            # Primeiro passo sempre é baixar o repositório para que o job possa acessar os arquivos
+            - id: repo
+              name: Repositoy Checkout
+              uses: actions/checkout@v2
+
+            - id: python
+              name: Configuração do Python e Instalação de pacotes
+              uses: actions/setup-python@v2
+              with:
+                python-version: '3.9'
+                cache: 'pip'
+            - run: pip install -r requirements.txt
+            
+            - id: jupyter
+              name: Executar o Notebook
+              run: jupyter execute HelloGit.ipynb
+              shell: bash
+
+
 
